@@ -10,13 +10,14 @@ import UIKit
 
 class TodoListViewController : UITableViewController {
 
-
+//var textField : String = "blag"
+    
     // simly by inheriting the uitableviewcontroller you dont need to add ourselves as a delegate nor variables, dont need to add any IBoutlets
     
-    //let cell : UITableViewCell
+    // let cell : UITableViewCell
     
-    
-    let itemArray=["Find Nemo","Buy Eggs", "Destroy Demogorgon"]
+    // var textField = UITextField()   -  does not work here
+    var itemArray=["Find Nemo","Buy Eggs", "Destroy Demogorgon"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,6 +65,45 @@ let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: in
         
     }
     
+    // MARK - add Todoey bar button item method
+    
+    @IBAction func addItemTodoeyPressed(_ sender: Any) {
+        
+        // to get this  variable typed!! I guess you need to put the UITextField() and not the usual type
+        
+        var textField = UITextField() // extending scope of the closures within function
+        
+        
+        let alert = UIAlertController(title: "Add new list item", message: "", preferredStyle: .alert)
+        
+        // adding an alert object
+        
+        let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
+            // what will happen when the user touches the add button
+            
+            
+            print("success")
+            print(textField.text) // this will print out as an optional and then inside will be the text
+            print(textField.text!)
+            self.itemArray.append(textField.text!)
+            // can add a default value ?? "added item" for example. (textField.text ?? "added item") or you can put an if statement asking if its nil ""
+            
+            self.tableView.reloadData()
+            
+        }
+        
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder="Create new item"
+            textField = alertTextField
+            print(alertTextField.text!)
+            print(textField.text!)
+            print("now")
+        }
+        
+        alert.addAction(action)
+        present (alert, animated: true, completion: nil)
+
+    }
     
     
 }
