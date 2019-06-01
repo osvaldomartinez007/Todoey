@@ -89,6 +89,7 @@ let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: in
             // can add a default value ?? "added item" for example. (textField.text ?? "added item") or you can put an if statement asking if its nil ""
             
             self.tableView.reloadData()
+            // yay reloaded and displayed the tableView!
             
         }
         
