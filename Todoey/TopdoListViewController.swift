@@ -19,8 +19,22 @@ class TodoListViewController : UITableViewController {
     // var textField = UITextField()   -  does not work here
     var itemArray=["Find Nemo","Buy Eggs", "Destroy Demogorgon"]
     
+    let defaults = UserDefaults.standard
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // problem here with itemArray is if the defaults does not exist ie the first time you run the program and then it will crash because no array has been copied into the p list defaults object
+        
+        if let items = defaults.array(forKey: "ItemArray") as? [String] {
+            
+            itemArray=items
+             
+        }
+        
+        print(itemArray)
+        
         // Do any additional setup after loading the view.
     }
 
@@ -40,7 +54,9 @@ class TodoListViewController : UITableViewController {
 
 let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
 
+        
         cell.textLabel?.text=itemArray[indexPath.row]
+       
         return cell
         
     }
@@ -87,6 +103,8 @@ let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: in
             print(textField.text!)
             self.itemArray.append(textField.text!)
             // can add a default value ?? "added item" for example. (textField.text ?? "added item") or you can put an if statement asking if its nil ""
+            
+            self.defaults.set(self.itemArray, forKey: "ItemArray") // in a closure so self for both items
             
             self.tableView.reloadData()
             // yay reloaded and displayed the tableView!
