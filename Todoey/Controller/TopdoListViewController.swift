@@ -19,36 +19,39 @@ class TodoListViewController : UITableViewController {
     // var textField = UITextField()   -  does not work here
     //var itemArray=["Find Nemo","Buy Eggs", "Destroy Demogorgon"]
     
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist") // added a path to the new plist
     var itemArray=[Item]()
     
-    let defaults = UserDefaults.standard
+    //let defaults = UserDefaults.standard
    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let newItem = Item()
-        newItem.itemName = "Find Nemo"
-        itemArray.append(newItem)
+        // grabbing first item from the array
         
-        let newItem2 = Item()
-        newItem2.itemName = "Buy Eggs"
-        itemArray.append(newItem2)
+        print(dataFilePath)
         
-        let newItem3 = Item()
-        newItem3.itemName = "Destroy Demogorgon"
-        itemArray.append(newItem3)
+//        let newItem = Item()
+//        newItem.itemName = "Find Nemo"
+//        itemArray.append(newItem)
+//
+//        let newItem2 = Item()
+//        newItem2.itemName = "Buy Eggs"
+//        itemArray.append(newItem2)
+//
+//        let newItem3 = Item()
+//        newItem3.itemName = "Destroy Demogorgon"
+//        itemArray.append(newItem3)
         
+        loadItems()
         
         // problem here with itemArray is if the defaults does not exist ie the first time you run the program and then it will crash because no array has been copied into the p list defaults object
         
-        if let items = defaults.array(forKey: "ItemArray") as? [Item] {
-
-            itemArray=items
-
-        }
+//        if let items = defaults.array(forKey: "ItemArray") as? [Item] {
+//            itemArray=items
+//        }
         
-        print(itemArray)
         
         // Do any additional setup after loading the view.
     }
@@ -104,6 +107,8 @@ class TodoListViewController : UITableViewController {
  
         
         itemArray[indexPath.row].checked = !itemArray[indexPath.row].checked // sends back the opposite
+        tableView.deselectRow(at: indexPath, animated: true)
+        saveItems()
         
 //        if itemArray[indexPath.row].checked == false {
 //
@@ -114,7 +119,7 @@ class TodoListViewController : UITableViewController {
 //            itemArray[indexPath.row].checked = false
 //        }
 //
-         tableView.deselectRow(at: indexPath, animated: true)
+        
 //
 //        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
 //
@@ -126,7 +131,7 @@ class TodoListViewController : UITableViewController {
 //
 //        }
         
-        tableView.reloadData()
+        // tableView.reloadData() now in function saveItems
         
     }
     
@@ -147,22 +152,19 @@ class TodoListViewController : UITableViewController {
             // what will happen when the user touches the add button
             
             
-            print("success")
-            print(textField.text) // this will print out as an optional and then inside will be the text
-            print(textField.text!)
+//            print("success")
+//            print(textField.text) // this will print out as an optional and then inside will be the text
+//            print(textField.text!)
             
             let itemArrayToAdd = Item()
             itemArrayToAdd.itemName=textField.text!
-            
-            
+
             self.itemArray.append(itemArrayToAdd)
             
             // can add a default value ?? "added item" for example. (textField.text ?? "added item") or you can put an if statement asking if its nil ""
+            //self.defaults.set(self.itemArray, forKey: "ItemArray") // in a closure so self for both items
             
-            self.defaults.set(self.itemArray, forKey: "ItemArray") // in a closure so self for both items
-            
-            self.tableView.reloadData()
-            // yay reloaded and displayed the tableView!
+            self.saveItems()
             
         }
         
@@ -180,6 +182,30 @@ class TodoListViewController : UITableViewController {
 
     }
     
+    func saveItems() {
+        
+        let encoder = PropertyListEncoder() // this is a plist encoder (Property list!)
+        
+        do {
+            let data = try encoder.encode(itemArray)
+            try data.write(to: dataFilePath!)
+        } catch {
+            print("Error encoding item array, and the error is \(error)")
+        }
+        
+        tableView.reloadData()
+        // yay reloaded and displayed the tableView!
+        
+    }
     
-}
+    func loadItems() {
+        do {
+        let data = try? Data(contentsOf: dataFilePath!) // try makes it an optional
+        let decoder = PropertyListDecoder()
+        itemArray = try decoder.decode([Item].self, from: data!)
+        }catch{
+           print ("Error encoding item array, and the error is \(error)")
+        }
+                    }
 
+}

@@ -8,8 +8,8 @@
 
 import Foundation
 
-class Item {
-    
+class Item: Codable {
+    // be able to be encodable to a plist or JSON, but has to have standard properties and not things like custom variables or objects within (arrays and dictionaries ok as well)
     var itemName: String = ""
     var checked: Bool = false
     
